@@ -9,6 +9,10 @@ source.new = function(client)
   return self
 end
 
+source.get_debug_name = function(self)
+  return table.concat({ 'nvim_lsp', self.client.name }, ':')
+end
+
 source.get_trigger_characters = function(self)
   return self:_get(self.client.server_capabilities, { 'completionProvider', 'triggerCharacters' }) or {}
 end
