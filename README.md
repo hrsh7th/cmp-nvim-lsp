@@ -1,15 +1,12 @@
 # cmp-nvim-lsp
+
 nvim-cmp source for neovim builtin LSP client
 
 # setup
 
 ```lua
-require('cmp_nvim_lsp').setup {}
-
-
 -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.preselectSupport = true
 capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
@@ -30,6 +27,4 @@ require'lspconfig'.clangd.setup {
   capabilities = capabilities,
 }
 ```
-
-
 
