@@ -13,26 +13,29 @@ source.get_debug_name = function(self)
   return table.concat({ 'nvim_lsp', self.client.name }, ':')
 end
 
+source.is_available = function(self)
+  -- client is stopped.
+  if self.client.is_stopped() then
+    return false
+  end
+
+  -- client is not attached to current buffer.
+  if not vim.lsp.buf_get_clients(vim.api.nvim_get_current_buf())[self.client.id] then
+    return false
+  end
+
+  -- client has no completion capability.
+  if not self:_get(self.client.server_capabilities, { 'completionProvider' }) then
+    return false
+  end
+  return true;
+end
+
 source.get_trigger_characters = function(self)
   return self:_get(self.client.server_capabilities, { 'completionProvider', 'triggerCharacters' }) or {}
 end
 
 source.complete = function(self, request, callback)
-  -- client is stopped.
-  if self.client.is_stopped() then
-    return callback()
-  end
-
-  -- client is not attached to current buffer.
-  if not vim.lsp.buf_get_clients(request.context.bufnr)[self.client.id] then
-    return callback()
-  end
-
-  -- client has no completion capability.
-  if not self:_get(self.client.server_capabilities, { 'completionProvider' }) then
-    return callback()
-  end
-
   local params = vim.lsp.util.make_position_params()
   params.context = {}
   params.context.triggerKind = request.completion_context.triggerKind
