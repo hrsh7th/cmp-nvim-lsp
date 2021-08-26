@@ -1,4 +1,3 @@
-local cmp = require('cmp')
 local source = require('cmp_nvim_lsp.source')
 
 local M = {}
@@ -46,6 +45,8 @@ end
 
 ---Refresh sources on InsertEnter.
 M._on_insert_enter = function()
+  local cmp = require('cmp')
+
   local allowed_clients = {}
 
   -- register all active clients.
