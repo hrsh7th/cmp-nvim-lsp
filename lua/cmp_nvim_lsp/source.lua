@@ -61,13 +61,14 @@ source.resolve = function(self, completion_item, callback)
     return callback()
   end
 
+  -- cancel old request
+  if self.resolve_request_id ~= nil then
+    self.client.cancel_request(self.resolve_request_id)
+  end
+
   -- client has no completion capability.
   if not self:_get(self.client.server_capabilities, { 'completionProvider', 'resolveProvider' }) then
     return callback()
-  end
-
-  if self.resolve_request_id ~= nil then
-    self.client.cancel_request(self.resolve_request_id)
   end
   local _, resolve_request_id
   _, resolve_request_id = self.client.request('completionItem/resolve', completion_item, function(_, _, response)
@@ -85,14 +86,16 @@ source.execute = function(self, completion_item, callback)
     return callback()
   end
 
+  -- cancel old request.
+  if self.execute_request_id ~= nil then
+    self.client.cancel_request(self.execute_request_id)
+  end
+
   -- completion_item has no command.
   if not completion_item.command then
     return callback()
   end
 
-  if self.execute_request_id ~= nil then
-    self.client.cancel_request(self.execute_request_id)
-  end
   local _, execute_request_id
   _, execute_request_id = self.client.request('workspace/executeCommand', completion_item.command, function(_, _, _)
     if self.execute_request_id ~= execute_request_id then
