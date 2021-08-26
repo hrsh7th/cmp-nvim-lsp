@@ -87,7 +87,7 @@ source.execute = function(self, completion_item, callback)
 
   -- completion_item has no command.
   if not completion_item.command then
-    callback()
+    return callback()
   end
 
   if self.execute_request_id ~= nil then
