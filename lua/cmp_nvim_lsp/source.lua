@@ -3,9 +3,7 @@ local source = {}
 source.new = function(client)
   local self = setmetatable({}, { __index = source })
   self.client = client
-  self.request_id = nil
-  self.resolve_request_id = nil
-  self.execute_request_id = nil
+  self.request_ids = {}
   return self
 end
 
@@ -41,18 +39,9 @@ source.complete = function(self, request, callback)
   params.context.triggerKind = request.completion_context.triggerKind
   params.context.triggerCharacter = request.completion_context.triggerCharacter
 
-  if self.request_id ~= nil then
-    self.client.cancel_request(self.request_id)
-  end
-
-  local _, request_id
-  _, request_id = self.client.request('textDocument/completion', params, function(_, _, response)
-    if self.request_id ~= request_id then
-      return
-    end
+  self:_request('textDocument/completion', params, function(_, response)
     callback(response)
   end)
-  self.request_id = request_id
 end
 
 source.resolve = function(self, completion_item, callback)
@@ -61,23 +50,14 @@ source.resolve = function(self, completion_item, callback)
     return callback()
   end
 
-  -- cancel old request
-  if self.resolve_request_id ~= nil then
-    self.client.cancel_request(self.resolve_request_id)
-  end
-
   -- client has no completion capability.
   if not self:_get(self.client.server_capabilities, { 'completionProvider', 'resolveProvider' }) then
     return callback()
   end
-  local _, resolve_request_id
-  _, resolve_request_id = self.client.request('completionItem/resolve', completion_item, function(_, _, response)
-    if self.resolve_request_id ~= resolve_request_id then
-      return
-    end
-    callback(response)
+
+  self:_request('completionItem/resolve', completion_item, function(_, response)
+    callback(response or completion_item)
   end)
-  self.resolve_request_id = resolve_request_id
 end
 
 source.execute = function(self, completion_item, callback)
@@ -86,24 +66,14 @@ source.execute = function(self, completion_item, callback)
     return callback()
   end
 
-  -- cancel old request.
-  if self.execute_request_id ~= nil then
-    self.client.cancel_request(self.execute_request_id)
-  end
-
   -- completion_item has no command.
   if not completion_item.command then
     return callback()
   end
 
-  local _, execute_request_id
-  _, execute_request_id = self.client.request('workspace/executeCommand', completion_item.command, function(_, _, _)
-    if self.execute_request_id ~= execute_request_id then
-      return
-    end
+  self:_request('workspace/executeCommand', completion_item.command, function(_, _)
     callback()
   end)
-  self.execute_request_id = execute_request_id
 end
 
 source._get = function(_, root, paths)
@@ -115,6 +85,24 @@ source._get = function(_, root, paths)
     end
   end
   return c
+end
+
+source._request = function(self, method, params, callback)
+  if self.request_ids[method] ~= nil then
+    self.client.cancel_request(self.request_ids[method])
+  end
+  local _, request_id
+  _, request_id = self.client.request(method, params, function(arg1, arg2, arg3, arg4)
+    if self.request_ids[method] ~= request_id then
+      return
+    end
+    if type(arg4) == 'number' then
+      callback(arg1, arg3) -- old signature
+    else
+      callback(arg1, arg2) -- new signature
+    end
+  end)
+  self.request_ids[method] = request_id
 end
 
 return source
