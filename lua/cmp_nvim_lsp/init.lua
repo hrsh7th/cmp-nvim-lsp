@@ -53,7 +53,10 @@ M._on_insert_enter = function()
   for _, client in ipairs(vim.lsp.get_active_clients()) do
     allowed_clients[client.id] = client
     if not M.client_source_map[client.id] then
-      M.client_source_map[client.id] = cmp.register_source('nvim_lsp', source.new(client))
+      local s = source.new(client)
+      if s:is_available() then
+        M.client_source_map[client.id] = cmp.register_source('nvim_lsp', s)
+      end
     end
   end
 
@@ -61,7 +64,10 @@ M._on_insert_enter = function()
   for _, client in ipairs(vim.lsp.buf_get_clients(0)) do
     allowed_clients[client.id] = client
     if not M.client_source_map[client.id] then
-      M.client_source_map[client.id] = cmp.register_source('nvim_lsp', source.new(client))
+      local s = source.new(client)
+      if s:is_available() then
+        M.client_source_map[client.id] = cmp.register_source('nvim_lsp', s)
+      end
     end
   end
 
