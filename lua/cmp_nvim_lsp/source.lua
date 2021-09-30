@@ -97,6 +97,8 @@ source._request = function(self, method, params, callback)
     if self.request_ids[method] ~= request_id then
       return
     end
+    self.request_ids[method] = nil
+
     if method == arg2 then
       callback(arg1, arg3) -- old signature
     else
