@@ -99,6 +99,12 @@ source._request = function(self, method, params, callback)
     end
     self.request_ids[method] = nil
 
+    -- Text changed, retry
+    if arg1 and arg1.code == -32801 then
+      self:_request(method, params, callback)
+      return
+    end
+
     if method == arg2 then
       callback(arg1, arg3) -- old signature
     else
