@@ -34,7 +34,7 @@ source.get_trigger_characters = function(self)
 end
 
 source.complete = function(self, request, callback)
-  local params = vim.lsp.util.make_position_params()
+  local params = vim.lsp.util.make_position_params(0, self.client.offset_encoding)
   params.context = {}
   params.context.triggerKind = request.completion_context.triggerKind
   params.context.triggerCharacter = request.completion_context.triggerCharacter
