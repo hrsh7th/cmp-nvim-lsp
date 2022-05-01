@@ -1,0 +1,29 @@
+*cmp-nvim-lsp*
+
+==============================================================================
+CONTENTS                                                 *cmp-nvim-lsp-contents*
+
+FAQ                                                           |cmp-nvim-lsp-faq|
+
+
+
+==============================================================================
+FAQ                                                           *cmp-nvim-lsp-faq*
+
+How to disable specific LSP server's cmpletion?~
+
+  You can disable specific LSP server's cmpletion by adding the following
+
+>
+  require('lspconfig')[%YOUR_LSP_SERVER%].setup {
+    on_attach = function(client)
+      client.server_capabilities.completionProvider = false
+    end
+  }
+<
+
+
+
+==============================================================================
+ vim:tw=78:ts=2:et:ft=help:norl:
+
