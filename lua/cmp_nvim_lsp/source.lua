@@ -1,5 +1,9 @@
 local source = {}
 
+local function trim(s)
+   return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 source.new = function(client)
   local self = setmetatable({}, { __index = source })
   self.client = client
@@ -33,13 +37,24 @@ source.get_trigger_characters = function(self)
   return self:_get(self.client.server_capabilities, { 'completionProvider', 'triggerCharacters' }) or {}
 end
 
+
 source.complete = function(self, request, callback)
   local params = vim.lsp.util.make_position_params(0, self.client.offset_encoding)
   params.context = {}
   params.context.triggerKind = request.completion_context.triggerKind
   params.context.triggerCharacter = request.completion_context.triggerCharacter
 
+
+  local remove_first_space = function(complete_response)
+    for k, v in pairs(complete_response["items"]) do
+      if v.label:sub(1,1) == ' ' then
+        v.label = trim(v.label)
+      end
+    end
+  end
+
   self:_request('textDocument/completion', params, function(_, response)
+    remove_first_space(response)
     callback(response)
   end)
 end
