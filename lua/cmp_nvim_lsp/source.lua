@@ -46,6 +46,10 @@ source.complete = function(self, request, callback)
 
 
   local remove_first_space = function(complete_response)
+    if not complete_response then
+      return
+    end
+
     if not complete_response["items"] then
       return
     end
