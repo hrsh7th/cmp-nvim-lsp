@@ -46,6 +46,10 @@ source.complete = function(self, request, callback)
 
 
   local remove_first_space = function(complete_response)
+    if not complete_response["items"] then
+      return
+    end
+
     for k, v in pairs(complete_response["items"]) do
       if v.label:sub(1,1) == ' ' then
         v.label = trim(v.label)
