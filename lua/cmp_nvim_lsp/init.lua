@@ -48,6 +48,7 @@ end
 
 ---Backwards compatibility
 M.update_capabilities = function(capabilities, override)
+  vim.deprecate('cmp_nvim_lsp.update_capabilities', 'cmp_nvim_lsp.default_capabilities', '1.0.0', 'cmp-nvim-lsp')
   return M.default_capabilities(override)
 end
 
@@ -90,4 +91,3 @@ M._on_insert_enter = function()
 end
 
 return M
-
