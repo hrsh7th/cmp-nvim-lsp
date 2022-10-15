@@ -20,6 +20,20 @@ local if_nil = function(val, default)
   return val
 end
 
+-- Backported from vim.deprecate (0.9.0+)
+local function deprecate(name, alternative, version, plugin, backtrace)
+  local message = name .. ' is deprecated'
+  plugin = plugin or 'Nvim'
+  message = alternative and (message .. ', use ' .. alternative .. ' instead.') or message
+  message = message
+    .. ' See :h deprecated\nThis function will be removed in '
+    .. plugin
+    .. ' version '
+    .. version
+  if vim.notify_once(message, vim.log.levels.WARN) and backtrace ~= false then
+    vim.notify(debug.traceback('', 2):sub(2), vim.log.levels.WARN)
+  end
+end
 
 M.default_capabilities = function(override)
   override = override or {}
@@ -50,7 +64,8 @@ end
 
 ---Backwards compatibility
 M.update_capabilities = function(capabilities, override)
-  vim.deprecate('cmp_nvim_lsp.update_capabilities', 'cmp_nvim_lsp.default_capabilities', '1.0.0', 'cmp-nvim-lsp')
+  local _deprecate = vim.deprecate or deprecate
+  _deprecate('cmp_nvim_lsp.update_capabilities', 'cmp_nvim_lsp.default_capabilities', '1.0.0', 'cmp-nvim-lsp')
   return M.default_capabilities(override)
 end
 
