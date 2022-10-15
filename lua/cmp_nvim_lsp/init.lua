@@ -27,20 +27,22 @@ M.default_capabilities = function(override)
   return {
     textDocument = {
       completion = {
-        snippetSupport = if_nil(override.snippetSupport, true),
-        preselectSupport = if_nil(override.preselectSupport, true),
-        insertReplaceSupport = if_nil(override.insertReplaceSupport, true),
-        labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
-        deprecatedSupport = if_nil(override.deprecatedSupport, true),
-        commitCharactersSupport = if_nil(override.commitCharactersSupport, true),
-        tagSupport = if_nil(override.tagSupport, { valueSet = { 1 } }),
-        resolveSupport = if_nil(override.resolveSupport, {
-            properties = {
-                "documentation",
-                "detail",
-                "additionalTextEdits",
-            },
-        }),
+        completionItem = {
+          snippetSupport = if_nil(override.snippetSupport, true),
+          preselectSupport = if_nil(override.preselectSupport, true),
+          insertReplaceSupport = if_nil(override.insertReplaceSupport, true),
+          labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
+          deprecatedSupport = if_nil(override.deprecatedSupport, true),
+          commitCharactersSupport = if_nil(override.commitCharactersSupport, true),
+          tagSupport = if_nil(override.tagSupport, { valueSet = { 1 } }),
+          resolveSupport = if_nil(override.resolveSupport, {
+              properties = {
+                  "documentation",
+                  "detail",
+                  "additionalTextEdits",
+              },
+          }),
+        }
       },
     },
   }
