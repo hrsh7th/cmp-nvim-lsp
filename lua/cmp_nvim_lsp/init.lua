@@ -20,28 +20,38 @@ local if_nil = function(val, default)
   return val
 end
 
-M.update_capabilities = function(capabilities, override)
+
+M.default_capabilities = function(override)
   override = override or {}
 
-  local completionItem = capabilities.textDocument.completion.completionItem
-
-  completionItem.snippetSupport = if_nil(override.snippetSupport, true)
-  completionItem.preselectSupport = if_nil(override.preselectSupport, true)
-  completionItem.insertReplaceSupport = if_nil(override.insertReplaceSupport, true)
-  completionItem.labelDetailsSupport = if_nil(override.labelDetailsSupport, true)
-  completionItem.deprecatedSupport = if_nil(override.deprecatedSupport, true)
-  completionItem.commitCharactersSupport = if_nil(override.commitCharactersSupport, true)
-  completionItem.tagSupport = if_nil(override.tagSupport, { valueSet = { 1 } })
-  completionItem.resolveSupport = if_nil(override.resolveSupport, {
-    properties = {
-      'documentation',
-      'detail',
-      'additionalTextEdits',
-    }
-  })
-
-  return capabilities
+  return {
+    textDocument = {
+      completion = {
+        snippetSupport = if_nil(override.snippetSupport, true),
+        preselectSupport = if_nil(override.preselectSupport, true),
+        insertReplaceSupport = if_nil(override.insertReplaceSupport, true),
+        labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
+        deprecatedSupport = if_nil(override.deprecatedSupport, true),
+        commitCharactersSupport = if_nil(override.commitCharactersSupport, true),
+        tagSupport = if_nil(override.tagSupport, { valueSet = { 1 } }),
+        resolveSupport = if_nil(override.resolveSupport, {
+            properties = {
+                "documentation",
+                "detail",
+                "additionalTextEdits",
+            },
+        }),
+      },
+    },
+  }
 end
+
+---Backwards compatibility
+M.update_capabilities = function(capabilities, override)
+  vim.deprecate('cmp_nvim_lsp.update_capabilities', 'cmp_nvim_lsp.default_capabilities', '1.0.0', 'cmp-nvim-lsp')
+  return M.default_capabilities(override)
+end
+
 
 ---Refresh sources on InsertEnter.
 M._on_insert_enter = function()
@@ -81,4 +91,3 @@ M._on_insert_enter = function()
 end
 
 return M
-
