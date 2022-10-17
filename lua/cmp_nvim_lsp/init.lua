@@ -7,12 +7,11 @@ M.client_source_map = {}
 
 ---Setup cmp-nvim-lsp source.
 M.setup = function()
-  vim.cmd([[
-    augroup cmp_nvim_lsp
-      autocmd!
-      autocmd InsertEnter * lua require'cmp_nvim_lsp'._on_insert_enter()
-    augroup END
-  ]])
+  vim.api.nvim_create_autocmd('InsertEnter', {
+    group = vim.api.nvim_create_augroup('cmp_nvim_lsp', { clear = true }),
+    pattern = '*',
+    callback = M._on_insert_enter
+  })
 end
 
 local if_nil = function(val, default)
