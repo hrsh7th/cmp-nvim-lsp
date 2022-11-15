@@ -71,11 +71,11 @@ M.default_capabilities = function(override)
         insertTextMode = if_nil(override.insertTextMode, 1),
         completionList = if_nil(override.completionList, {
           itemDefaults = {
-            commitCharacters = true,
-            editRange = true,
-            insertTextFormat = true,
-            insertTextMode = false,
-            data = true,
+            commitCharacters = nil,
+            editRange = nil,
+            insertTextFormat = nil,
+            insertTextMode = nil,
+            data = nil,
           }
         })
       },
