@@ -40,14 +40,18 @@ M.default_capabilities = function(override)
   return {
     textDocument = {
       completion = {
+        dynamicRegistration = if_nil(override.dynamicRegistration, false),
         completionItem = {
           snippetSupport = if_nil(override.snippetSupport, true),
-          preselectSupport = if_nil(override.preselectSupport, true),
-          insertReplaceSupport = if_nil(override.insertReplaceSupport, true),
-          labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
-          deprecatedSupport = if_nil(override.deprecatedSupport, true),
           commitCharactersSupport = if_nil(override.commitCharactersSupport, true),
-          tagSupport = if_nil(override.tagSupport, { valueSet = { 1 } }),
+          deprecatedSupport = if_nil(override.deprecatedSupport, true),
+          preselectSupport = if_nil(override.preselectSupport, true),
+          tagSupport = if_nil(override.tagSupport, {
+            valueSet = {
+              1, -- Deprecated
+            }
+          }),
+          insertReplaceSupport = if_nil(override.insertReplaceSupport, true),
           resolveSupport = if_nil(override.resolveSupport, {
               properties = {
                   "documentation",
@@ -55,14 +59,32 @@ M.default_capabilities = function(override)
                   "additionalTextEdits",
               },
           }),
-        }
+          insertTextModeSupport = if_nil(override.insertTextModeSupport, {
+            valueSet = {
+              1, -- asIs
+              2, -- adjustIndentation
+            }
+          }),
+          labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
+        },
+        contextSupport = if_nil(override.snippetSupport, true),
+        insertTextMode = if_nil(override.insertTextMode, 1),
+        completionList = if_nil(override.completionList, {
+          itemDefaults = {
+            commitCharacters = true,
+            editRange = true,
+            insertTextFormat = true,
+            insertTextMode = false,
+            data = true,
+          }
+        })
       },
     },
   }
 end
 
 ---Backwards compatibility
-M.update_capabilities = function(capabilities, override)
+M.update_capabilities = function(_, override)
   local _deprecate = vim.deprecate or deprecate
   _deprecate('cmp_nvim_lsp.update_capabilities', 'cmp_nvim_lsp.default_capabilities', '1.0.0', 'cmp-nvim-lsp')
   return M.default_capabilities(override)
