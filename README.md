@@ -27,6 +27,30 @@ require'lspconfig'.clangd.setup {
 }
 ```
 
+# Option
+
+`[%LSPCONFIG-NAME%].keyword_pattern`
+
+You can override keyword_pattern for specific language-server like this.
+
+```lua
+cmp.setup {
+  ...
+  sources = {
+    {
+      name = 'nvim_lsp',
+      option = {
+        php = {
+          keyword_pattern = [=[[\%(\$\k*\)\|\k\+]]=]
+        }
+      }
+    }
+  }
+  ...
+}
+```
+
+
 Readme!
 ====================
 1. There is a Github issue that documents [breaking changes](https://github.com/hrsh7th/cmp-nvim-lsp/issues/38) for cmp-nvim-lsp. Subscribe to the issue to be notified of upcoming breaking changes.

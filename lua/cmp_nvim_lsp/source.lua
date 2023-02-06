@@ -49,7 +49,10 @@ end
 ---@param params cmp.SourceApiParams
 ---@return string
 source.get_keyword_pattern = function(self, params)
-  return (params.option or {})[self.client.name] or require('cmp').get_config().completion.keyword_pattern
+  local option
+  option = params.option or {}
+  option = option[self.client.name] or {}
+  return option.keyword_pattern or require('cmp').get_config().completion.keyword_pattern
 end
 
 ---Resolve LSP CompletionItem.
