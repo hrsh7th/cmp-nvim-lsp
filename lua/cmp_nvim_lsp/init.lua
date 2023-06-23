@@ -57,6 +57,12 @@ M.default_capabilities = function(override)
                   "documentation",
                   "detail",
                   "additionalTextEdits",
+                  "sortText",
+                  "filterText",
+                  "insertText",
+                  "textEdit",
+                  "insertTextFormat",
+                  "insertTextMode",
               },
           }),
           insertTextModeSupport = if_nil(override.insertTextModeSupport, {
