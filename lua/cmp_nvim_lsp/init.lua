@@ -7,10 +7,17 @@ M.client_source_map = {}
 
 ---Setup cmp-nvim-lsp source.
 M.setup = function()
-  vim.api.nvim_create_autocmd('InsertEnter', {
-    group = vim.api.nvim_create_augroup('cmp_nvim_lsp', { clear = true }),
+  local group = vim.api.nvim_create_augroup('cmp_nvim_lsp', { clear = true })
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = group,
     pattern = '*',
-    callback = M._on_insert_enter
+    callback = function()
+      vim.api.nvim_create_autocmd('InsertEnter', {
+        group = group,
+        pattern = '*',
+        callback = M._on_insert_enter
+      })
+    end,
   })
 end
 
