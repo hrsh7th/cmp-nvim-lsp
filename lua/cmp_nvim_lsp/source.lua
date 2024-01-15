@@ -22,7 +22,12 @@ source.is_available = function(self)
   end
 
   -- client is not attached to current buffer.
-  if not vim.lsp.buf_get_clients(vim.api.nvim_get_current_buf())[self.client.id] then
+  local bufnr = vim.api.nvim_get_current_buf()
+  local get_clients = (
+    vim.lsp.get_clients ~= nil and vim.lsp.get_clients -- nvim 0.10+
+    or vim.lsp.get_active_clients
+  )
+  if vim.tbl_isempty(get_clients({ bufnr = bufnr, id = self.client.id })) then
     return false
   end
 
