@@ -103,8 +103,13 @@ M._on_insert_enter = function()
 
   local allowed_clients = {}
 
+  local get_clients = (
+    vim.lsp.get_clients ~= nil and vim.lsp.get_clients -- nvim 0.10+
+    or vim.lsp.get_active_clients
+  )
+
   -- register all active clients.
-  for _, client in ipairs(vim.lsp.get_active_clients()) do
+  for _, client in ipairs(get_clients()) do
     allowed_clients[client.id] = client
     if not M.client_source_map[client.id] then
       local s = source.new(client)
@@ -115,7 +120,7 @@ M._on_insert_enter = function()
   end
 
   -- register all buffer clients (early register before activation)
-  for _, client in ipairs(vim.lsp.buf_get_clients(0)) do
+  for _, client in ipairs(get_clients({ bufnr = 0 })) do
     allowed_clients[client.id] = client
     if not M.client_source_map[client.id] then
       local s = source.new(client)
