@@ -106,9 +106,7 @@ source.execute = function(self, completion_item, callback)
     return callback()
   end
 
-  self:_request('workspace/executeCommand', completion_item.command, function(_, _)
-    callback()
-  end)
+  self.client:_exec_cmd(completion_item.command, nil, callback, nil)
 end
 
 ---Get object path.
