@@ -102,11 +102,45 @@ source.execute = function(self, completion_item, callback)
   end
 
   -- completion_item has no command.
-  if not completion_item.command then
+  local command = completion_item.command
+  if not command then
     return callback()
   end
 
-  self.client:_exec_cmd(completion_item.command, nil, callback, nil)
+  -- The logic below is taken from the following and is slightly modified.
+  -- https://github.com/neovim/neovim/blob/f72dc2b4c805f309f23aff62b3e7ba7b71a554d2/runtime/lua/vim/lsp/client.lua#L864-L905
+  local bufnr = vim.api.nvim_get_current_buf()
+  local f = self.client.commands[command.command] or vim.lsp.commands[command.command]
+  if f then
+    f(command, { bufnr = bufnr, client_id = self.client.id })
+    callback()
+    return
+  end
+
+  local command_provider = self.client.server_capabilities.executeCommandProvider
+  local commands = type(command_provider) == 'table' and command_provider.commands or {}
+  if not vim.list_contains(commands, command.command) then
+    vim.notify_once(
+      string.format(
+        'cmp_nvim_lsp: Language server `%s` does not support command `%s`. This command may require a client extension.',
+        self.client.name,
+        command.command
+      ),
+      vim.log.levels.WARN
+    )
+    callback()
+    return
+  end
+
+  -- Not using command directly to exclude extra properties,
+  -- see https://github.com/python-lsp/python-lsp-server/issues/146
+  local params = {
+    command = command.command,
+    arguments = command.arguments,
+  }
+  self.client.request(vim.lsp.protocol.Methods.workspace_executeCommand, params, function()
+    callback()
+  end, bufnr)
 end
 
 ---Get object path.
