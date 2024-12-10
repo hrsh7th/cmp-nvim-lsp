@@ -56,7 +56,6 @@ M.default_capabilities = function(override)
               properties = {
                   "documentation",
                   "additionalTextEdits",
-                  "insertText",
                   "insertTextFormat",
                   "insertTextMode",
                   "command",
