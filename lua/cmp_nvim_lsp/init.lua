@@ -55,14 +55,10 @@ M.default_capabilities = function(override)
           resolveSupport = if_nil(override.resolveSupport, {
               properties = {
                   "documentation",
-                  "detail",
                   "additionalTextEdits",
-                  "sortText",
-                  "filterText",
-                  "insertText",
-                  "textEdit",
                   "insertTextFormat",
                   "insertTextMode",
+                  "command",
               },
           }),
           insertTextModeSupport = if_nil(override.insertTextModeSupport, {
