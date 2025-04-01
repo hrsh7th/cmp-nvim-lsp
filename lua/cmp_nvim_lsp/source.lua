@@ -17,7 +17,7 @@ end
 ---@return boolean
 source.is_available = function(self)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return false
   end
 
@@ -78,7 +78,7 @@ end
 ---@param callback function
 source.resolve = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return callback()
   end
 
@@ -97,7 +97,7 @@ end
 ---@param callback function
 source.execute = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return callback()
   end
 
@@ -132,11 +132,11 @@ end
 ---@param callback function
 source._request = function(self, method, params, callback)
   if self.request_ids[method] ~= nil then
-    self.client.cancel_request(self.request_ids[method])
+    self.client:cancel_request(self.request_ids[method])
     self.request_ids[method] = nil
   end
   local _, request_id
-  _, request_id = self.client.request(method, params, function(arg1, arg2, arg3)
+  _, request_id = self.client:request(method, params, function(arg1, arg2, arg3)
     if self.request_ids[method] ~= request_id then
       return
     end
