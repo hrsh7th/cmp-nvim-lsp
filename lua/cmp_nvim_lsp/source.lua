@@ -17,7 +17,7 @@ end
 ---@return boolean
 source.is_available = function(self)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return false
   end
 
@@ -78,7 +78,7 @@ end
 ---@param callback function
 source.resolve = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return callback()
   end
 
@@ -97,7 +97,7 @@ end
 ---@param callback function
 source.execute = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client.is_stopped() then
+  if self.client:is_stopped() then
     return callback()
   end
 
