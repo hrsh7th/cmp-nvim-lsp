@@ -136,7 +136,7 @@ source._request = function(self, method, params, callback)
     self.request_ids[method] = nil
   end
   local _, request_id
-  _, request_id = self.client.request(method, params, function(arg1, arg2, arg3)
+  _, request_id = self.client:request(method, params, function(arg1, arg2, arg3)
     if self.request_ids[method] ~= request_id then
       return
     end
