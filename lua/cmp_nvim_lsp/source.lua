@@ -132,7 +132,7 @@ end
 ---@param callback function
 source._request = function(self, method, params, callback)
   if self.request_ids[method] ~= nil then
-    self.client.cancel_request(self.request_ids[method])
+    self.client:cancel_request(self.request_ids[method])
     self.request_ids[method] = nil
   end
   local _, request_id
