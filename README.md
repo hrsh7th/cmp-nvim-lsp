@@ -19,7 +19,9 @@ require'cmp'.setup {
 }
 
 -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local default_caps = vim.lsp.protocol.make_client_capabilities()
+local cmp_caps = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = vim.tbl_deep_extend("force", default_caps, cmp_caps)
 
 -- An example for configuring `clangd` LSP to use nvim-cmp as a completion engine
 require('lspconfig').clangd.setup {
