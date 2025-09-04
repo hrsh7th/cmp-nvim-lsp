@@ -132,10 +132,12 @@ end
 ---@param callback function
 source._request = function(self, method, params, callback)
   if self.request_ids[method] ~= nil then
+    if vim.fn.has("nvim-0.11") == 0 then self.client.cancel_request = self.client._cancel_request end
     self.client:cancel_request(self.request_ids[method])
     self.request_ids[method] = nil
   end
   local _, request_id
+  if vim.fn.has("nvim-0.11") == 0 then self.client.request = self.client._request end
   _, request_id = self.client:request(method, params, function(arg1, arg2, arg3)
     if self.request_ids[method] ~= request_id then
       return
