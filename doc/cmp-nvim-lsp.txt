@@ -15,11 +15,11 @@ How to disable specific LSP server's cmpletion?~
   You can disable specific LSP server's cmpletion by adding the following
 
 >
-  require('lspconfig')[%YOUR_LSP_SERVER%].setup {
+  vim.lsp.config([%YOUR_LSP_SERVER%], {
     on_attach = function(client)
       client.server_capabilities.completionProvider = false
     end
-  }
+  })
 <
 
 
