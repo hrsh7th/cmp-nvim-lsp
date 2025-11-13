@@ -22,10 +22,10 @@ require'cmp'.setup {
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- An example for configuring `clangd` LSP to use nvim-cmp as a completion engine
-require('lspconfig').clangd.setup {
+vim.lsp.config('clangd', {
   capabilities = capabilities,
   ...  -- other lspconfig configs
-}
+})
 ```
 
 ## Option
