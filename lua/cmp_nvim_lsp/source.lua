@@ -13,11 +13,36 @@ source.get_debug_name = function(self)
   return table.concat({ 'nvim_lsp', self.client.name }, ':')
 end
 
+local is_nvim_11_or_newer = vim.fn.has('nvim-0.11') == 1
+
+--- Calls a method on a client object in a way that is compatible with both
+--- Neovim 0.10 and 0.11+, handling the dot vs. colon syntax change for methods.
+---
+--- @param method_name string The name of the method to call (e.g., 'request').
+--- @param ... any Variable arguments to be passed to the target method.
+--- @return any The return value(s) from the called method.
+source._call_client_method = function(self, method_name, ...)
+  local method_func = self.client[method_name]
+
+  if is_nvim_11_or_newer then
+    -- Nvim 0.11+ requires the colon (:) syntax to avoid deprecation warnings.
+    -- The call `obj:method(...)` is syntactic sugar for `obj.method(obj, ...)`.
+    -- We replicate this by calling the function and passing the object `obj`
+    -- as the first argument, followed by the rest of the arguments.
+    return method_func(self.client, ...)
+  else
+    -- Nvim 0.10 requires the dot (.) syntax for methods with arguments,
+    -- because a wrapper already injects the 'self' parameter.
+    -- We just call the function directly with its arguments.
+    return method_func(...)
+  end
+end
+
 ---Return the source is available.
 ---@return boolean
 source.is_available = function(self)
   -- client is stopped.
-  if self.client:is_stopped() then
+  if self:_call_client_method('is_stopped') then
     return false
   end
 
@@ -78,7 +103,7 @@ end
 ---@param callback function
 source.resolve = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client:is_stopped() then
+  if self:_call_client_method('is_stopped') then
     return callback()
   end
 
@@ -97,7 +122,7 @@ end
 ---@param callback function
 source.execute = function(self, completion_item, callback)
   -- client is stopped.
-  if self.client:is_stopped() then
+  if self:_call_client_method('is_stopped') then
     return callback()
   end
 
@@ -132,11 +157,11 @@ end
 ---@param callback function
 source._request = function(self, method, params, callback)
   if self.request_ids[method] ~= nil then
-    self.client:cancel_request(self.request_ids[method])
+    self:_call_client_method('cancel_request', self.request_ids[method])
     self.request_ids[method] = nil
   end
   local _, request_id
-  _, request_id = self.client:request(method, params, function(arg1, arg2, arg3)
+  _, request_id = self:_call_client_method('request', method, params, function(arg1, arg2, arg3)
     if self.request_ids[method] ~= request_id then
       return
     end
