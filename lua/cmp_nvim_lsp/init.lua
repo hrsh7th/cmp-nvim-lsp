@@ -69,7 +69,7 @@ M.default_capabilities = function(override)
           }),
           labelDetailsSupport = if_nil(override.labelDetailsSupport, true),
         },
-        contextSupport = if_nil(override.snippetSupport, true),
+        contextSupport = if_nil(override.contextSupport, true),
         insertTextMode = if_nil(override.insertTextMode, 1),
         completionList = if_nil(override.completionList, {
           itemDefaults = {
